@@ -1,0 +1,9 @@
+services:
+  timewise:
+    build:
+      context: .
+    container_name: timewise
+    environment:
+      - TIMEWISE_PORT=${TIMEWISE_PORT}
+    ports:
+      - ${TIMEWISE_PORT}:${TIMEWISE_PORT}
