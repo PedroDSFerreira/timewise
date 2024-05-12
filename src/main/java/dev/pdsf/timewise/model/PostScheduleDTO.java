@@ -1,17 +1,21 @@
 package dev.pdsf.timewise.model;
 
-import dev.pdsf.timewise.validator.UniqueDailyTimeSlots;
+import dev.pdsf.timewise.validator.NoTimeSlotOverlap;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
 public class PostScheduleDTO {
     @Valid
     @NotEmpty
-    @UniqueDailyTimeSlots
-    private List<DailyTimeSlots> timeSlots;
+    @NoTimeSlotOverlap
+    private List<TimeSlot> timeSlots;
     @Valid
     @NotEmpty
     private List<Task> tasks;
@@ -19,16 +23,16 @@ public class PostScheduleDTO {
     protected PostScheduleDTO() {
     }
 
-    public PostScheduleDTO(List<DailyTimeSlots> timeSlots, List<Task> tasks) {
+    public PostScheduleDTO(List<TimeSlot> timeSlots, List<Task> tasks) {
         this.timeSlots = timeSlots;
         this.tasks = tasks;
     }
 
-    public List<DailyTimeSlots> getTimeSlots() {
+    public List<TimeSlot> getTimeSlots() {
         return timeSlots;
     }
 
-    public void setTimeSlots(List<DailyTimeSlots> timeSlots) {
+    public void setTimeSlots(List<TimeSlot> timeSlots) {
         this.timeSlots = timeSlots;
     }
 
@@ -38,6 +42,35 @@ public class PostScheduleDTO {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public void mergeTimeSlots() {
+        timeSlots.sort(Comparator.comparing(TimeSlot::getDayOfWeek).thenComparing(TimeSlot::getStart));
+
+        List<TimeSlot> mergedTimeSlots = new ArrayList<>();
+        for (TimeSlot current : timeSlots) {
+            if (!mergedTimeSlots.isEmpty()) {
+                TimeSlot last = mergedTimeSlots.getLast();
+
+                if (isSameDayOfWeek(last.getDayOfWeek(), current.getDayOfWeek()) && isContiguous(last.getEnd(), current.getStart())) {
+                    last.setEnd(current.getEnd().toString());
+                } else {
+                    mergedTimeSlots.add(current);
+                }
+            } else {
+                mergedTimeSlots.add(current);
+            }
+        }
+
+        timeSlots = mergedTimeSlots;
+    }
+
+    private boolean isSameDayOfWeek(DayOfWeek dow1, DayOfWeek dow2) {
+        return dow1.equals(dow2);
+    }
+
+    private boolean isContiguous(LocalTime end, LocalTime start) {
+        return end.equals(start) || end.plusMinutes(1).equals(start);
     }
 
     @Override

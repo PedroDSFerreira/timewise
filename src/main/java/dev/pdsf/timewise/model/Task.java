@@ -5,10 +5,11 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class Task {
     @NotNull
-    private String id;
+    private final String id;
     @NotNull
     private String name;
     @NotNull
@@ -19,11 +20,11 @@ public class Task {
     private long duration;
 
     protected Task() {
-
+        this.id = UUID.randomUUID().toString();
     }
 
-    public Task(String id, String name, int priority, long duration) {
-        this.id = id;
+    public Task(String name, int priority, long duration) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.priority = priority;
         this.duration = duration;
