@@ -7,39 +7,36 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Task {
+public class TaskFragment {
     @NotNull
     private final String id;
     @NotNull
-    private String name;
+    private String taskId;
     @NotNull
     @Min(1)
     @Max(10)
     private int priority;
-    @NotNull
-    private long duration;
 
-    protected Task() {
+    protected TaskFragment() {
         this.id = UUID.randomUUID().toString();
     }
 
-    public Task(String name, int priority, long duration) {
+    public TaskFragment(String taskId, int priority) {
         this.id = UUID.randomUUID().toString();
-        this.name = name;
+        this.taskId = taskId;
         this.priority = priority;
-        this.duration = duration;
     }
 
     public String getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getTaskId() {
+        return taskId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
     }
 
     public int getPriority() {
@@ -50,20 +47,13 @@ public class Task {
         this.priority = priority;
     }
 
-    public long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(long duration) {
-        this.duration = duration;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
-        return Objects.equals(id, task.id);
+        TaskFragment that = (TaskFragment) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
@@ -73,11 +63,10 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "TaskFragment{" +
                "id='" + id + '\'' +
-               ", name='" + name + '\'' +
+               ", taskId='" + taskId + '\'' +
                ", priority=" + priority +
-               ", duration=" + duration +
                '}';
     }
 }

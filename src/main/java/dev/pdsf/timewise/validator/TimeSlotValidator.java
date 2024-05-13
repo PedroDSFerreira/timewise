@@ -24,8 +24,8 @@ public class TimeSlotValidator implements ConstraintValidator<ValidTimeSlot, Tim
         LocalTime end = timeSlot.getEnd();
 
         return isTimeInIntervalBucket(start) &&
-                isTimeInIntervalBucket(end) &&
-                start.isBefore(end);
+               isTimeInIntervalBucket(end) &&
+               start.isBefore(end);
     }
 
     private boolean isTimeInIntervalBucket(LocalTime time) {

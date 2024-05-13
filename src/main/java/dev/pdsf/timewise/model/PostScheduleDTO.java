@@ -11,6 +11,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import static dev.pdsf.timewise.validator.TimeSlotValidator.MINUTES_PER_GRAIN;
+
 public class PostScheduleDTO {
     @Valid
     @NotEmpty
@@ -42,6 +44,31 @@ public class PostScheduleDTO {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public List<TimeGrain> convertToTimeGrains() {
+        List<TimeGrain> timeGrains = new ArrayList<>();
+        for (TimeSlot timeSlot : timeSlots) {
+            LocalTime start = timeSlot.getStart();
+            LocalTime end = timeSlot.getEnd();
+            while (start.isBefore(end)) {
+                timeGrains.add(new TimeGrain(timeSlot.getId(), start, timeSlot.getDayOfWeek()));
+                start = start.plusMinutes(MINUTES_PER_GRAIN);
+            }
+        }
+        return timeGrains;
+    }
+
+    public List<TaskFragment> convertToTaskFragments() {
+        List<TaskFragment> taskFragments = new ArrayList<>();
+        for (Task task : tasks) {
+            long duration = task.getDuration();
+            long totalFragments = (long) Math.ceil((double) duration / MINUTES_PER_GRAIN);
+            for (int i = 0; i < totalFragments; i++) {
+                taskFragments.add(new TaskFragment(task.getId(), task.getPriority()));
+            }
+        }
+        return taskFragments;
     }
 
     public void mergeTimeSlots() {
@@ -89,8 +116,8 @@ public class PostScheduleDTO {
     @Override
     public String toString() {
         return "Schedule{" +
-                "timeSlots=" + timeSlots +
-                ", tasks=" + tasks +
-                '}';
+               "timeSlots=" + timeSlots +
+               ", tasks=" + tasks +
+               '}';
     }
 }

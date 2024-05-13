@@ -4,7 +4,6 @@ import dev.pdsf.timewise.validator.ValidTimeSlot;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Locale;
 import java.util.Objects;
@@ -20,7 +19,6 @@ public class TimeSlot {
     private LocalTime start;
     @NotNull
     private LocalTime end;
-    private long duration;
 
     protected TimeSlot() {
         this.id = UUID.randomUUID().toString();
@@ -31,7 +29,6 @@ public class TimeSlot {
         this.dayOfWeek = parseDayOfWeek(dayOfWeek);
         this.start = LocalTime.parse(start);
         this.end = LocalTime.parse(end);
-        this.duration = Duration.between(this.start, this.end).toMinutes();
     }
 
     public String getId() {
@@ -52,7 +49,6 @@ public class TimeSlot {
 
     public void setStart(String start) {
         this.start = LocalTime.parse(start);
-        this.setDuration();
     }
 
     public LocalTime getEnd() {
@@ -61,19 +57,6 @@ public class TimeSlot {
 
     public void setEnd(String end) {
         this.end = LocalTime.parse(end);
-        this.setDuration();
-    }
-
-    private void setDuration() {
-        if (this.start == null || this.end == null) {
-            return;
-        }
-
-        this.duration = Duration.between(this.start, this.end).toMinutes();
-    }
-
-    public long getDuration() {
-        return duration;
     }
 
     private DayOfWeek parseDayOfWeek(String dayOfWeek) {
@@ -105,9 +88,9 @@ public class TimeSlot {
     @Override
     public String toString() {
         return "TimeSlot{" +
-                "id='" + id + '\'' +
-                ", start=" + start +
-                ", end=" + end +
-                '}';
+               "id='" + id + '\'' +
+               ", start=" + start +
+               ", end=" + end +
+               '}';
     }
 }
