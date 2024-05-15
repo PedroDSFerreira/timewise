@@ -1,8 +1,8 @@
 package dev.pdsf.timewise.resource;
 
 import dev.pdsf.timewise.model.PostScheduleDTO;
-import dev.pdsf.timewise.model.TaskAssignment;
-import dev.pdsf.timewise.service.SchedulerService;
+import dev.pdsf.timewise.model.domain.TaskFragmentAssignment;
+import dev.pdsf.timewise.service.ScheduleService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,15 +14,15 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1")
 public class SchedulerResource {
-    private final SchedulerService schedulerService;
+    private final ScheduleService scheduleService;
 
-    public SchedulerResource(SchedulerService schedulerService) {
-        this.schedulerService = schedulerService;
+    public SchedulerResource(ScheduleService schedulerService) {
+        this.scheduleService = schedulerService;
     }
 
     @PostMapping("/schedule")
-    List<TaskAssignment> create_schedule(@RequestBody @Valid PostScheduleDTO postScheduleDTO) {
-        schedulerService.processSchedule(postScheduleDTO);
-        return schedulerService.createSchedule(postScheduleDTO);
+    List<TaskFragmentAssignment> create_schedule(@RequestBody @Valid PostScheduleDTO postScheduleDTO) {
+        scheduleService.processSchedule(postScheduleDTO);
+        return scheduleService.createSchedule(postScheduleDTO);
     }
 }

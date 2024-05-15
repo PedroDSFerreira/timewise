@@ -1,4 +1,4 @@
-package dev.pdsf.timewise.model;
+package dev.pdsf.timewise.model.domain;
 
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 @PlanningSolution
-public class Schedule {
+public class ScheduleDomain {
     @ProblemFactCollectionProperty
     @ValueRangeProvider
     private List<TimeGrain> timeGrains;
@@ -19,28 +19,28 @@ public class Schedule {
     @ValueRangeProvider
     private List<TaskFragment> taskFragments;
     @PlanningEntityCollectionProperty
-    private List<TaskAssignment> taskAssignments;
+    private List<TaskFragmentAssignment> taskFragmentAssignments;
     @PlanningScore
     private HardSoftScore score;
 
-    protected Schedule() {
+    protected ScheduleDomain() {
     }
 
-    public Schedule(List<TimeGrain> timeGrains, List<TaskFragment> taskFragments) {
+    public ScheduleDomain(List<TimeGrain> timeGrains, List<TaskFragment> taskFragments) {
         this.timeGrains = timeGrains;
         this.taskFragments = taskFragments;
-        this.taskAssignments = generateTaskAssignments();
+        this.taskFragmentAssignments = generateTaskAssignments();
     }
 
-    private List<TaskAssignment> generateTaskAssignments() {
+    private List<TaskFragmentAssignment> generateTaskAssignments() {
         int taskAssignmentSize = taskFragments.size();
-        List<TaskAssignment> taskAssignments = new java.util.ArrayList<>(taskAssignmentSize);
+        List<TaskFragmentAssignment> taskFragmentAssignments = new java.util.ArrayList<>(taskAssignmentSize);
         for (TaskFragment taskFragment : taskFragments) {
-            TaskAssignment taskAssignment = new TaskAssignment();
-            taskAssignment.setTaskFragment(taskFragment);
-            taskAssignments.add(taskAssignment);
+            TaskFragmentAssignment taskFragmentAssignment = new TaskFragmentAssignment();
+            taskFragmentAssignment.setTaskFragment(taskFragment);
+            taskFragmentAssignments.add(taskFragmentAssignment);
         }
-        return taskAssignments;
+        return taskFragmentAssignments;
     }
 
     public List<TimeGrain> getTimeGrains() {
@@ -59,12 +59,12 @@ public class Schedule {
         this.taskFragments = taskFragments;
     }
 
-    public List<TaskAssignment> getTaskAssignments() {
-        return taskAssignments;
+    public List<TaskFragmentAssignment> getTaskAssignments() {
+        return taskFragmentAssignments;
     }
 
-    public void setTaskAssignments(List<TaskAssignment> taskAssignments) {
-        this.taskAssignments = taskAssignments;
+    public void setTaskAssignments(List<TaskFragmentAssignment> taskFragmentAssignments) {
+        this.taskFragmentAssignments = taskFragmentAssignments;
     }
 
     public HardSoftScore getScore() {
@@ -75,21 +75,21 @@ public class Schedule {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Schedule schedule = (Schedule) o;
-        return Objects.equals(timeGrains, schedule.timeGrains) && Objects.equals(taskFragments, schedule.taskFragments) && Objects.equals(taskAssignments, schedule.taskAssignments);
+        ScheduleDomain scheduleDomain = (ScheduleDomain) o;
+        return Objects.equals(timeGrains, scheduleDomain.timeGrains) && Objects.equals(taskFragments, scheduleDomain.taskFragments) && Objects.equals(taskFragmentAssignments, scheduleDomain.taskFragmentAssignments);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(timeGrains, taskFragments, taskAssignments);
+        return Objects.hash(timeGrains, taskFragments, taskFragmentAssignments);
     }
 
     @Override
     public String toString() {
         return "Schedule{" +
-               "timeGrains=" + timeGrains +
-               ", taskFragments=" + taskFragments +
-               ", taskAssignments=" + taskAssignments +
-               '}';
+                "timeGrains=" + timeGrains +
+                ", taskFragments=" + taskFragments +
+                ", taskFragmentAssignments=" + taskFragmentAssignments +
+                '}';
     }
 }

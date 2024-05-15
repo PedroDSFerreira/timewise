@@ -1,6 +1,9 @@
 package dev.pdsf.timewise.model;
 
+import dev.pdsf.timewise.model.domain.TaskFragment;
+import dev.pdsf.timewise.model.domain.TimeGrain;
 import dev.pdsf.timewise.validator.NoTimeSlotOverlap;
+import dev.pdsf.timewise.validator.ValidPostScheduleDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -11,8 +14,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import static dev.pdsf.timewise.validator.TimeSlotValidator.MINUTES_PER_GRAIN;
+import static dev.pdsf.timewise.ScheduleConstants.MINUTES_PER_GRAIN;
 
+@ValidPostScheduleDTO
 public class PostScheduleDTO {
     @Valid
     @NotEmpty
@@ -49,11 +53,11 @@ public class PostScheduleDTO {
     public List<TimeGrain> convertToTimeGrains() {
         List<TimeGrain> timeGrains = new ArrayList<>();
         for (TimeSlot timeSlot : timeSlots) {
-            LocalTime start = timeSlot.getStart();
-            LocalTime end = timeSlot.getEnd();
-            while (start.isBefore(end)) {
-                timeGrains.add(new TimeGrain(timeSlot.getId(), start, timeSlot.getDayOfWeek()));
-                start = start.plusMinutes(MINUTES_PER_GRAIN);
+            LocalTime startTime = timeSlot.getStartTime();
+            LocalTime end = timeSlot.getEndTime();
+            while (startTime.isBefore(end)) {
+                timeGrains.add(new TimeGrain(timeSlot));
+                startTime = startTime.plusMinutes(MINUTES_PER_GRAIN);
             }
         }
         return timeGrains;
@@ -65,22 +69,23 @@ public class PostScheduleDTO {
             long duration = task.getDuration();
             long totalFragments = (long) Math.ceil((double) duration / MINUTES_PER_GRAIN);
             for (int i = 0; i < totalFragments; i++) {
-                taskFragments.add(new TaskFragment(task.getId(), task.getPriority()));
+                taskFragments.add(new TaskFragment(task));
             }
         }
         return taskFragments;
     }
 
     public void mergeTimeSlots() {
-        timeSlots.sort(Comparator.comparing(TimeSlot::getDayOfWeek).thenComparing(TimeSlot::getStart));
+        timeSlots.sort(Comparator.comparing(TimeSlot::getDayOfWeek).thenComparing(TimeSlot::getStartTime));
 
         List<TimeSlot> mergedTimeSlots = new ArrayList<>();
         for (TimeSlot current : timeSlots) {
             if (!mergedTimeSlots.isEmpty()) {
                 TimeSlot last = mergedTimeSlots.getLast();
 
-                if (isSameDayOfWeek(last.getDayOfWeek(), current.getDayOfWeek()) && isContiguous(last.getEnd(), current.getStart())) {
-                    last.setEnd(current.getEnd().toString());
+                if (isSameDayOfWeek(last.getDayOfWeek(), current.getDayOfWeek()) &&
+                        isContiguous(last.getEndTime(), current.getStartTime())) {
+                    last.setEnd(current.getEndTime().toString());
                 } else {
                     mergedTimeSlots.add(current);
                 }
@@ -116,8 +121,8 @@ public class PostScheduleDTO {
     @Override
     public String toString() {
         return "Schedule{" +
-               "timeSlots=" + timeSlots +
-               ", tasks=" + tasks +
-               '}';
+                "timeSlots=" + timeSlots +
+                ", tasks=" + tasks +
+                '}';
     }
 }

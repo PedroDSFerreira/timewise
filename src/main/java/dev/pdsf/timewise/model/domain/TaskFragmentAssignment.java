@@ -1,4 +1,4 @@
-package dev.pdsf.timewise.model;
+package dev.pdsf.timewise.model.domain;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
@@ -8,24 +8,24 @@ import java.util.Objects;
 import java.util.UUID;
 
 @PlanningEntity
-public class TaskAssignment {
+public class TaskFragmentAssignment {
     @PlanningId
-    private final String id;
+    private final UUID id;
     @PlanningVariable
     private TimeGrain timeGrain;
     private TaskFragment taskFragment;
 
-    protected TaskAssignment() {
-        this.id = UUID.randomUUID().toString();
+    public TaskFragmentAssignment() {
+        this.id = UUID.randomUUID();
     }
 
-    public TaskAssignment(TaskFragment taskFragment, TimeGrain timeGrain) {
-        this.id = UUID.randomUUID().toString();
+    public TaskFragmentAssignment(TaskFragment taskFragment, TimeGrain timeGrain) {
+        this.id = UUID.randomUUID();
         this.taskFragment = taskFragment;
         this.timeGrain = timeGrain;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -49,7 +49,7 @@ public class TaskAssignment {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TaskAssignment that = (TaskAssignment) o;
+        TaskFragmentAssignment that = (TaskFragmentAssignment) o;
         return Objects.equals(id, that.id);
     }
 
@@ -60,10 +60,10 @@ public class TaskAssignment {
 
     @Override
     public String toString() {
-        return "TaskAssignment{" +
-               "id='" + id + '\'' +
-               ", taskFragment=" + taskFragment +
-               ", timeGrain=" + timeGrain +
-               '}';
+        return "TaskFragmentAssignment{" +
+                "id='" + id + '\'' +
+                ", taskFragment=" + taskFragment +
+                ", timeGrain=" + timeGrain +
+                '}';
     }
 }

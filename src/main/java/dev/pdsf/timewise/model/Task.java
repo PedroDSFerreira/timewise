@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class Task {
     @NotNull
-    private final String id;
+    private final UUID id;
     @NotNull
     private String name;
     @NotNull
@@ -20,17 +20,17 @@ public class Task {
     private long duration;
 
     protected Task() {
-        this.id = UUID.randomUUID().toString();
+        this.id = UUID.randomUUID();
     }
 
     public Task(String name, int priority, long duration) {
-        this.id = UUID.randomUUID().toString();
+        this.id = UUID.randomUUID();
         this.name = name;
         this.priority = priority;
         this.duration = duration;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -74,10 +74,10 @@ public class Task {
     @Override
     public String toString() {
         return "Task{" +
-               "id='" + id + '\'' +
-               ", name='" + name + '\'' +
-               ", priority=" + priority +
-               ", duration=" + duration +
-               '}';
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", priority=" + priority +
+                ", duration=" + duration +
+                '}';
     }
 }

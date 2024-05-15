@@ -51,7 +51,7 @@ public class NoTimeSlotOverlapValidator implements ConstraintValidator<NoTimeSlo
     }
 
     private boolean timeSlotsOverlap(TimeSlot timeSlot1, TimeSlot timeSlot2) {
-        return timeSlot1.getEnd().isAfter(timeSlot2.getStart()) &&
-               timeSlot2.getEnd().isAfter(timeSlot1.getStart());
+        return timeSlot1.getEndTime().isAfter(timeSlot2.getStartTime()) &&
+                timeSlot2.getEndTime().isAfter(timeSlot1.getStartTime());
     }
 }

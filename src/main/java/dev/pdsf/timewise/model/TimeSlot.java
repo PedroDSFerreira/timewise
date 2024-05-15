@@ -12,26 +12,26 @@ import java.util.UUID;
 @ValidTimeSlot
 public class TimeSlot {
     @NotNull
-    private final String id;
+    private final UUID id;
     @NotNull
     private DayOfWeek dayOfWeek;
     @NotNull
-    private LocalTime start;
+    private LocalTime startTime;
     @NotNull
-    private LocalTime end;
+    private LocalTime endTime;
 
     protected TimeSlot() {
-        this.id = UUID.randomUUID().toString();
+        this.id = UUID.randomUUID();
     }
 
-    public TimeSlot(String dayOfWeek, String start, String end) {
-        this.id = UUID.randomUUID().toString();
+    public TimeSlot(String dayOfWeek, String startTime, String endTime) {
+        this.id = UUID.randomUUID();
         this.dayOfWeek = parseDayOfWeek(dayOfWeek);
-        this.start = LocalTime.parse(start);
-        this.end = LocalTime.parse(end);
+        this.startTime = LocalTime.parse(startTime);
+        this.endTime = LocalTime.parse(endTime);
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -43,20 +43,20 @@ public class TimeSlot {
         this.dayOfWeek = parseDayOfWeek(dayOfWeek);
     }
 
-    public LocalTime getStart() {
-        return start;
+    public LocalTime getStartTime() {
+        return startTime;
     }
 
-    public void setStart(String start) {
-        this.start = LocalTime.parse(start);
+    public void setStartTime(String startTime) {
+        this.startTime = LocalTime.parse(startTime);
     }
 
-    public LocalTime getEnd() {
-        return end;
+    public LocalTime getEndTime() {
+        return endTime;
     }
 
-    public void setEnd(String end) {
-        this.end = LocalTime.parse(end);
+    public void setEnd(String endTime) {
+        this.endTime = LocalTime.parse(endTime);
     }
 
     private DayOfWeek parseDayOfWeek(String dayOfWeek) {
@@ -88,9 +88,9 @@ public class TimeSlot {
     @Override
     public String toString() {
         return "TimeSlot{" +
-               "id='" + id + '\'' +
-               ", start=" + start +
-               ", end=" + end +
-               '}';
+                "id='" + id + '\'' +
+                ", start=" + startTime +
+                ", end=" + endTime +
+                '}';
     }
 }
