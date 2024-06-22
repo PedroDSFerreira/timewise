@@ -1,9 +1,11 @@
-package dev.pdsf.timewise.model;
+package dev.pdsf.timewise.model.domain;
 
+import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import dev.pdsf.timewise.validator.ValidTimeSlot;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Locale;
 import java.util.Objects;
@@ -11,6 +13,7 @@ import java.util.UUID;
 
 @ValidTimeSlot
 public class TimeSlot {
+    @PlanningId
     @NotNull
     private final UUID id;
     @NotNull
@@ -18,7 +21,7 @@ public class TimeSlot {
     @NotNull
     private LocalTime startTime;
     @NotNull
-    private LocalTime endTime;
+    private long duration;
 
     protected TimeSlot() {
         this.id = UUID.randomUUID();
@@ -28,7 +31,7 @@ public class TimeSlot {
         this.id = UUID.randomUUID();
         this.dayOfWeek = parseDayOfWeek(dayOfWeek);
         this.startTime = LocalTime.parse(startTime);
-        this.endTime = LocalTime.parse(endTime);
+        this.duration = Duration.between(this.startTime, LocalTime.parse(endTime)).toMinutes();
     }
 
     public UUID getId() {
@@ -51,12 +54,20 @@ public class TimeSlot {
         this.startTime = LocalTime.parse(startTime);
     }
 
-    public LocalTime getEndTime() {
-        return endTime;
+    public long getDuration() {
+        return duration;
     }
 
-    public void setEnd(String endTime) {
-        this.endTime = LocalTime.parse(endTime);
+    public void setDuration(LocalTime endTime) {
+        this.duration = Duration.between(this.startTime, endTime).toMinutes();
+    }
+
+    public LocalTime getEndTime() {
+        return startTime.plusMinutes(duration);
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.duration = Duration.between(this.startTime, endTime).toMinutes();
     }
 
     private DayOfWeek parseDayOfWeek(String dayOfWeek) {
@@ -90,7 +101,7 @@ public class TimeSlot {
         return "TimeSlot{" +
                 "id='" + id + '\'' +
                 ", start=" + startTime +
-                ", end=" + endTime +
+                ", end=" + getEndTime() +
                 '}';
     }
 }

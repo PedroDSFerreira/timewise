@@ -1,53 +1,62 @@
 package dev.pdsf.timewise.solver;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
-import ai.timefold.solver.core.api.score.stream.Constraint;
-import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
-import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
-import ai.timefold.solver.core.api.score.stream.Joiners;
-import dev.pdsf.timewise.model.domain.TaskFragmentAssignment;
+import ai.timefold.solver.core.api.score.stream.*;
+import dev.pdsf.timewise.model.domain.Task;
+import dev.pdsf.timewise.model.domain.TimeSlot;
 
 public class ScheduleConstraintProvider implements ConstraintProvider {
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[]{
                 // Hard constraints
-                timeGrainConflict(constraintFactory),
-                taskFragmentsAreContiguous(constraintFactory),
+                taskFitsIntoTimeSlot(constraintFactory),
                 // Soft constraints
+                earliestStartTime(constraintFactory),
+                earliestDay(constraintFactory),
+                highestPriority(constraintFactory)
         };
     }
 
-    private Constraint timeGrainConflict(ConstraintFactory constraintFactory) {
-        // A time grain can only be assigned to one task assignment
+    private Constraint taskFitsIntoTimeSlot(ConstraintFactory constraintFactory) {
         return constraintFactory
-                .forEachUniquePair(TaskFragmentAssignment.class,
-                        Joiners.equal(TaskFragmentAssignment::getTimeGrain))
+                .forEach(TimeSlot.class)
+                .join(Task.class,
+                        Joiners.equal(TimeSlot::getId, task -> task.getTimeSlot().getId()))
+                .groupBy((timeSlot, task) -> timeSlot,
+                        ConstraintCollectors.sum((timeSlot, task) -> Math.toIntExact(task.getDuration())))
+                .filter((timeSlot, taskDurationSum) -> taskDurationSum > timeSlot.getDuration())
                 .penalize(HardSoftScore.ONE_HARD)
-                .asConstraint("timeGrainConflict");
+                .asConstraint("A task should fit into a time slot");
     }
 
-    private Constraint taskFragmentsAreContiguous(ConstraintFactory constraintFactory) {
-        // compare taskFragment.getTaskId and timeGrain.getTimeSlotId
+
+    private Constraint earliestStartTime(ConstraintFactory constraintFactory) {
         return constraintFactory
-                .forEachUniquePair(TaskFragmentAssignment.class)
+                .forEachUniquePair(Task.class)
                 .filter(
-                        (ta1, ta2) -> ta1.getTaskFragment().getTask().getId()
-                                .equals(ta2.getTaskFragment().getTask().getId()) &&
-                                !ta1.getTimeGrain().getTimeSlot().getId()
-                                        .equals(ta2.getTimeGrain().getTimeSlot().getId()))
-                .penalize(HardSoftScore.ONE_HARD)
-                .asConstraint("taskFragmentsAreContiguous");
+                        (ta1, ta2) -> ta1.getTimeSlot().getStartTime()
+                                .isAfter(ta2.getTimeSlot().getStartTime()))
+                .penalize(HardSoftScore.ONE_SOFT)
+                .asConstraint("A task assignment should be assigned to the earliest possible time grain");
     }
 
-    //private Constraint taskPriority(ConstraintFactory constraintFactory) {
-    //    // A task assignment with a higher priority should be assigned to a time grain before a task assignment with a lower priority
-    //    return constraintFactory
-    //            .forEachUniquePair(TaskFragmentAssignment.class)
-    //            .filter(
-    //                    (ta1, ta2) -> ta1.getTaskFragment().getPriority()
-    //                                          > ta2.getTaskFragment().getPriority())
-    //            .penalize(HardSoftScore.ONE_SOFT)
-    //            .asConstraint("taskPriority");
-    //}
+    private Constraint earliestDay(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEachUniquePair(Task.class)
+                .filter(
+                        (ta1, ta2) -> ta1.getTimeSlot().getDayOfWeek()
+                                .getValue() > ta2.getTimeSlot().getDayOfWeek().getValue())
+                .penalize(HardSoftScore.ONE_SOFT)
+                .asConstraint("A task assignment should be assigned to the earliest possible day");
+    }
+
+    private Constraint highestPriority(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEachUniquePair(Task.class)
+                .filter(
+                        (ta1, ta2) -> ta1.getPriority() > ta2.getPriority())
+                .penalize(HardSoftScore.ONE_SOFT)
+                .asConstraint("A task assignment should be assigned to the highest priority (lowest number)");
+    }
 }

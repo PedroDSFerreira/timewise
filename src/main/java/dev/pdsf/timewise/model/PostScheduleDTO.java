@@ -1,7 +1,7 @@
 package dev.pdsf.timewise.model;
 
-import dev.pdsf.timewise.model.domain.TaskFragment;
-import dev.pdsf.timewise.model.domain.TimeGrain;
+import dev.pdsf.timewise.model.domain.Task;
+import dev.pdsf.timewise.model.domain.TimeSlot;
 import dev.pdsf.timewise.validator.NoTimeSlotOverlap;
 import dev.pdsf.timewise.validator.ValidPostScheduleDTO;
 import jakarta.validation.Valid;
@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-
-import static dev.pdsf.timewise.ScheduleConstants.MINUTES_PER_GRAIN;
 
 @ValidPostScheduleDTO
 public class PostScheduleDTO {
@@ -50,30 +48,6 @@ public class PostScheduleDTO {
         this.tasks = tasks;
     }
 
-    public List<TimeGrain> convertToTimeGrains() {
-        List<TimeGrain> timeGrains = new ArrayList<>();
-        for (TimeSlot timeSlot : timeSlots) {
-            LocalTime startTime = timeSlot.getStartTime();
-            LocalTime end = timeSlot.getEndTime();
-            while (startTime.isBefore(end)) {
-                timeGrains.add(new TimeGrain(timeSlot));
-                startTime = startTime.plusMinutes(MINUTES_PER_GRAIN);
-            }
-        }
-        return timeGrains;
-    }
-
-    public List<TaskFragment> convertToTaskFragments() {
-        List<TaskFragment> taskFragments = new ArrayList<>();
-        for (Task task : tasks) {
-            long duration = task.getDuration();
-            long totalFragments = (long) Math.ceil((double) duration / MINUTES_PER_GRAIN);
-            for (int i = 0; i < totalFragments; i++) {
-                taskFragments.add(new TaskFragment(task));
-            }
-        }
-        return taskFragments;
-    }
 
     public void mergeTimeSlots() {
         timeSlots.sort(Comparator.comparing(TimeSlot::getDayOfWeek).thenComparing(TimeSlot::getStartTime));
@@ -85,7 +59,7 @@ public class PostScheduleDTO {
 
                 if (isSameDayOfWeek(last.getDayOfWeek(), current.getDayOfWeek()) &&
                         isContiguous(last.getEndTime(), current.getStartTime())) {
-                    last.setEnd(current.getEndTime().toString());
+                    last.setEndTime(current.getEndTime());
                 } else {
                     mergedTimeSlots.add(current);
                 }

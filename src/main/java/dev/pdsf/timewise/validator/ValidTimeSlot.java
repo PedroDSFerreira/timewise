@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = TimeSlotValidator.class)
 public @interface ValidTimeSlot {
 
-    String message() default "Start time must be before end time and both must be in 15 minute intervals";
+    String message() default "Start time must be before end time";
 
     Class<?>[] groups() default {};
 

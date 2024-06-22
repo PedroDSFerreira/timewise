@@ -1,6 +1,6 @@
 package dev.pdsf.timewise.validator;
 
-import dev.pdsf.timewise.model.TimeSlot;
+import dev.pdsf.timewise.model.domain.TimeSlot;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

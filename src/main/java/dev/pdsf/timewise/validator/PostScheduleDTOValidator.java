@@ -1,11 +1,10 @@
 package dev.pdsf.timewise.validator;
 
 import dev.pdsf.timewise.model.PostScheduleDTO;
-import dev.pdsf.timewise.model.Task;
+import dev.pdsf.timewise.model.domain.Task;
+import dev.pdsf.timewise.model.domain.TimeSlot;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-
-import java.time.Duration;
 
 public class PostScheduleDTOValidator implements ConstraintValidator<ValidPostScheduleDTO, PostScheduleDTO> {
 
@@ -20,8 +19,7 @@ public class PostScheduleDTOValidator implements ConstraintValidator<ValidPostSc
         }
 
         long totalTimeslotDuration = postScheduleDTO.getTimeSlots().stream()
-                .mapToLong(timeslot ->
-                        Duration.between(timeslot.getStartTime(), timeslot.getEndTime()).toMinutes())
+                .mapToLong(TimeSlot::getDuration)
                 .sum();
 
         long totalTaskDuration = postScheduleDTO.getTasks().stream()

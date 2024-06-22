@@ -1,5 +1,8 @@
-package dev.pdsf.timewise.model;
+package dev.pdsf.timewise.model.domain;
 
+import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
+import ai.timefold.solver.core.api.domain.lookup.PlanningId;
+import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +10,9 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
+@PlanningEntity
 public class Task {
+    @PlanningId
     @NotNull
     private final UUID id;
     @NotNull
@@ -18,6 +23,9 @@ public class Task {
     private int priority;
     @NotNull
     private long duration;
+
+    @PlanningVariable
+    private TimeSlot timeSlot;
 
     protected Task() {
         this.id = UUID.randomUUID();
@@ -56,6 +64,14 @@ public class Task {
 
     public void setDuration(long duration) {
         this.duration = duration;
+    }
+
+    public TimeSlot getTimeSlot() {
+        return timeSlot;
+    }
+
+    public void setTimeSlot(TimeSlot timeSlot) {
+        this.timeSlot = timeSlot;
     }
 
     @Override
