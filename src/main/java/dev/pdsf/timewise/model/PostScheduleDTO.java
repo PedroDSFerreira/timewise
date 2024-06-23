@@ -3,18 +3,14 @@ package dev.pdsf.timewise.model;
 import dev.pdsf.timewise.model.domain.Task;
 import dev.pdsf.timewise.model.domain.TimeSlot;
 import dev.pdsf.timewise.validator.NoTimeSlotOverlap;
-import dev.pdsf.timewise.validator.ValidPostScheduleDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-@ValidPostScheduleDTO
 public class PostScheduleDTO {
     @Valid
     @NotEmpty
@@ -57,8 +53,7 @@ public class PostScheduleDTO {
             if (!mergedTimeSlots.isEmpty()) {
                 TimeSlot last = mergedTimeSlots.getLast();
 
-                if (isSameDayOfWeek(last.getDayOfWeek(), current.getDayOfWeek()) &&
-                        isContiguous(last.getEndTime(), current.getStartTime())) {
+                if (isSameDayOfWeek(last, current) && isContiguous(last, current)) {
                     last.setEndTime(current.getEndTime());
                 } else {
                     mergedTimeSlots.add(current);
@@ -71,12 +66,12 @@ public class PostScheduleDTO {
         timeSlots = mergedTimeSlots;
     }
 
-    private boolean isSameDayOfWeek(DayOfWeek dow1, DayOfWeek dow2) {
-        return dow1.equals(dow2);
+    private boolean isSameDayOfWeek(TimeSlot ts1, TimeSlot ts2) {
+        return ts1.getDayOfWeek().equals(ts2.getDayOfWeek());
     }
 
-    private boolean isContiguous(LocalTime end, LocalTime start) {
-        return end.equals(start) || end.plusMinutes(1).equals(start);
+    private boolean isContiguous(TimeSlot ts1, TimeSlot ts2) {
+        return ts1.getEndTime().equals(ts2.getStartTime());
     }
 
     @Override

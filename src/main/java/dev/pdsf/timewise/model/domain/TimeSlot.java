@@ -21,7 +21,7 @@ public class TimeSlot {
     @NotNull
     private LocalTime startTime;
     @NotNull
-    private long duration;
+    private int duration;
 
     protected TimeSlot() {
         this.id = UUID.randomUUID();
@@ -31,7 +31,7 @@ public class TimeSlot {
         this.id = UUID.randomUUID();
         this.dayOfWeek = parseDayOfWeek(dayOfWeek);
         this.startTime = LocalTime.parse(startTime);
-        this.duration = Duration.between(this.startTime, LocalTime.parse(endTime)).toMinutes();
+        this.duration = parseDuration(endTime);
     }
 
     public UUID getId() {
@@ -50,16 +50,16 @@ public class TimeSlot {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = LocalTime.parse(startTime);
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
     }
 
-    public long getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(LocalTime endTime) {
-        this.duration = Duration.between(this.startTime, endTime).toMinutes();
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
     public LocalTime getEndTime() {
@@ -67,7 +67,11 @@ public class TimeSlot {
     }
 
     public void setEndTime(LocalTime endTime) {
-        this.duration = Duration.between(this.startTime, endTime).toMinutes();
+        this.duration = (int) Duration.between(this.startTime, endTime).toMinutes();
+    }
+
+    private int parseDuration(String endTime) {
+        return (int) Duration.between(startTime, LocalTime.parse(endTime)).toMinutes();
     }
 
     private DayOfWeek parseDayOfWeek(String dayOfWeek) {
@@ -98,10 +102,6 @@ public class TimeSlot {
 
     @Override
     public String toString() {
-        return "TimeSlot{" +
-                "id='" + id + '\'' +
-                ", start=" + startTime +
-                ", end=" + getEndTime() +
-                '}';
+        return "TimeSlot(" + id + ',' + dayOfWeek + ',' + startTime + ',' + duration + ')';
     }
 }

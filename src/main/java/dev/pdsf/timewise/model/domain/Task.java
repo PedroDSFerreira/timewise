@@ -12,6 +12,8 @@ import java.util.UUID;
 
 @PlanningEntity
 public class Task {
+    public static final int MAX_PRIORITY = 10;
+
     @PlanningId
     @NotNull
     private final UUID id;
@@ -19,19 +21,19 @@ public class Task {
     private String name;
     @NotNull
     @Min(1)
-    @Max(10)
+    @Max(MAX_PRIORITY)
     private int priority;
     @NotNull
-    private long duration;
+    private int duration;
 
-    @PlanningVariable
+    @PlanningVariable(allowsUnassigned = true)
     private TimeSlot timeSlot;
 
     protected Task() {
         this.id = UUID.randomUUID();
     }
 
-    public Task(String name, int priority, long duration) {
+    public Task(String name, int priority, int duration) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.priority = priority;
@@ -58,11 +60,11 @@ public class Task {
         this.priority = priority;
     }
 
-    public long getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(long duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 
@@ -89,11 +91,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", priority=" + priority +
-                ", duration=" + duration +
-                '}';
+        return "Task(" + id + ',' + name + ',' + duration + ')';
     }
 }
