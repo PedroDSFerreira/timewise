@@ -20,8 +20,6 @@ public class TimeSlotValidator implements ConstraintValidator<ValidTimeSlot, Tim
 
         LocalTime startTime = timeSlot.getStartTime();
         LocalTime endTime = timeSlot.getEndTime();
-        System.out.println("Start time: " + startTime);
-        System.out.println("End time: " + endTime);
 
         return startTime.isBefore(endTime);
     }
