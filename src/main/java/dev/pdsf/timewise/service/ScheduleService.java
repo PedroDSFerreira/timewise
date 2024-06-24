@@ -2,7 +2,7 @@ package dev.pdsf.timewise.service;
 
 import ai.timefold.solver.core.api.solver.SolverJob;
 import ai.timefold.solver.core.api.solver.SolverManager;
-import dev.pdsf.timewise.model.PostScheduleDTO;
+import dev.pdsf.timewise.model.PostScheduleRequestDTO;
 import dev.pdsf.timewise.model.domain.Schedule;
 import dev.pdsf.timewise.model.domain.Task;
 import dev.pdsf.timewise.model.domain.TimeSlot;
@@ -18,11 +18,11 @@ public class ScheduleService {
     @Autowired
     private SolverManager<Schedule, UUID> solverManager;
 
-    public void processSchedule(PostScheduleDTO postScheduleDTO) {
+    public void processSchedule(PostScheduleRequestDTO postScheduleDTO) {
         postScheduleDTO.mergeTimeSlots();
     }
 
-    public List<Task> createSchedule(PostScheduleDTO postScheduleDTO) {
+    public List<Task> createSchedule(PostScheduleRequestDTO postScheduleDTO) {
         List<TimeSlot> timeSlots = postScheduleDTO.getTimeSlots();
         List<Task> tasks = postScheduleDTO.getTasks();
 

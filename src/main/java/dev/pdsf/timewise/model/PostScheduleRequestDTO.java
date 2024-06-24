@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class PostScheduleDTO {
+public class PostScheduleRequestDTO {
     @Valid
     @NotEmpty
     @NoTimeSlotOverlap
@@ -20,10 +20,10 @@ public class PostScheduleDTO {
     @NotEmpty
     private List<Task> tasks;
 
-    protected PostScheduleDTO() {
+    protected PostScheduleRequestDTO() {
     }
 
-    public PostScheduleDTO(List<TimeSlot> timeSlots, List<Task> tasks) {
+    public PostScheduleRequestDTO(List<TimeSlot> timeSlots, List<Task> tasks) {
         this.timeSlots = timeSlots;
         this.tasks = tasks;
     }
@@ -78,8 +78,8 @@ public class PostScheduleDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PostScheduleDTO postScheduleDTO = (PostScheduleDTO) o;
-        return Objects.equals(timeSlots, postScheduleDTO.timeSlots) && Objects.equals(tasks, postScheduleDTO.tasks);
+        PostScheduleRequestDTO postScheduleRequestDTO = (PostScheduleRequestDTO) o;
+        return Objects.equals(timeSlots, postScheduleRequestDTO.timeSlots) && Objects.equals(tasks, postScheduleRequestDTO.tasks);
     }
 
     @Override

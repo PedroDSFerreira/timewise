@@ -1,6 +1,6 @@
 package dev.pdsf.timewise.resource;
 
-import dev.pdsf.timewise.model.PostScheduleDTO;
+import dev.pdsf.timewise.model.PostScheduleRequestDTO;
 import dev.pdsf.timewise.model.domain.Task;
 import dev.pdsf.timewise.service.ScheduleService;
 import jakarta.validation.Valid;
@@ -21,7 +21,7 @@ public class SchedulerResource {
     }
 
     @PostMapping("/schedule")
-    List<Task> create_schedule(@RequestBody @Valid PostScheduleDTO postScheduleDTO) {
+    List<Task> create_schedule(@RequestBody @Valid PostScheduleRequestDTO postScheduleDTO) {
         scheduleService.processSchedule(postScheduleDTO);
         return scheduleService.createSchedule(postScheduleDTO);
     }
