@@ -1,7 +1,7 @@
 services:
   timewise:
     build:
-      context: .
+      context: ./backend
     container_name: timewise
     environment:
       - TIMEWISE_PORT=${TIMEWISE_PORT}
