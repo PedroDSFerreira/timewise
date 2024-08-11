@@ -7,3 +7,13 @@ services:
       - TIMEWISE_PORT=${TIMEWISE_PORT}
     ports:
       - ${TIMEWISE_PORT}:${TIMEWISE_PORT}
+
+  frontend:
+    image: node:18-alpine
+    command: sh -c "npm install && npm run dev"
+    working_dir: /app
+    ports:
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+    volumes:
+      - ./frontend:/app
+      - ./frontend/node_modules:/app/node_modules
